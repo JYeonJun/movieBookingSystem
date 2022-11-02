@@ -30,7 +30,8 @@ public class Movie extends BaseEntity {
     private Director director;
 
     // 배우
-    private List<Actor> actors;
+    @OneToMany(mappedBy = "movie")
+    private List<MovieActor> actors;
 
     // 장르
     @Enumerated(EnumType.STRING)

@@ -21,6 +21,6 @@ public class Actor {
 
     private LocalDate birthDate;
 
-    @OneToMany
-    private List<Movie> productionCasts;
+    @OneToMany(mappedBy = "actor")
+    private List<MovieActor> productionCasts;
 }
