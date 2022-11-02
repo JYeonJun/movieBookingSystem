@@ -22,4 +22,7 @@ public class MovieActor {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ACTOR_ID")
     private Actor actor;
+
+    @Enumerated(EnumType.STRING)
+    private MovieActorState movieActorState;
 }

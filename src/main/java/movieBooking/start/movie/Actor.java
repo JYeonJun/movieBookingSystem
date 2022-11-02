@@ -23,4 +23,10 @@ public class Actor {
 
     @OneToMany(mappedBy = "actor")
     private List<MovieActor> productionCasts;
+
+    // 키
+    private Double height;
+
+    // 소속사 이름
+    private String agency;
 }
