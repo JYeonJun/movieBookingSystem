@@ -1,6 +1,7 @@
 package movieBooking.start.movie;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
@@ -10,6 +11,7 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
+@NoArgsConstructor
 public class Actor {
 
     @Id
@@ -21,12 +23,19 @@ public class Actor {
 
     private LocalDate birthDate;
 
-    @OneToMany(mappedBy = "actor")
-    private List<MovieActor> productionCasts;
-
     // 키
     private Double height;
 
     // 소속사 이름
     private String agency;
+
+    @OneToMany(mappedBy = "actor")
+    private List<MovieActor> productionCasts;
+
+    public Actor(String name, LocalDate birthDate, Double height, String agency) {
+        this.name = name;
+        this.birthDate = birthDate;
+        this.height = height;
+        this.agency = agency;
+    }
 }
