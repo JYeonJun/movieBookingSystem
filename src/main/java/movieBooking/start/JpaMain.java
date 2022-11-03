@@ -4,6 +4,10 @@ import movieBooking.start.movie.*;
 import movieBooking.start.person.Address;
 import movieBooking.start.person.Client;
 import movieBooking.start.person.Person;
+import movieBooking.start.secreening.Screening;
+import movieBooking.start.theater.Seat;
+import movieBooking.start.theater.SeatState;
+import movieBooking.start.theater.Theater;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -11,11 +15,14 @@ import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.List;
 
 public class JpaMain {
 
+    private static EntityManagerFactory emf = Persistence.createEntityManagerFactory("movieBooking");
+
     public static void main(String[] args) {
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("movieBooking");
 
         EntityManager em = emf.createEntityManager();
 
@@ -72,9 +79,10 @@ public class JpaMain {
             em.persist(supporting6);
 
             // 영화 3건 (그 시절 우리가 좋아했던 소녀, 너의 췌장을 먹고 싶어, 나의 소녀시대)
-            Movie movie1 = new Movie("그 시절 우리가 좋아했떤 소녀", LocalDate.of(2012, 8, 22), director1, MovieGenre.ROMANCE, 107);
-            Movie movie2 = new Movie("너의 췌장을 먹고 싶어", LocalDate.of(2017, 10, 25), director2, MovieGenre.ROMANCE, 115);
-            Movie movie3 = new Movie("나의 소녀시대", LocalDate.of(2015, 8, 13), director3, MovieGenre.ROMANCE, 134);
+            LocalDateTime currentTime = LocalDateTime.now();
+            Movie movie1 = new Movie(currentTime, currentTime,"그 시절 우리가 좋아했떤 소녀", LocalDate.of(2012, 8, 22), director1, MovieGenre.ROMANCE, 107);
+            Movie movie2 = new Movie(currentTime, currentTime, "너의 췌장을 먹고 싶어", LocalDate.of(2017, 10, 25), director2, MovieGenre.ROMANCE, 115);
+            Movie movie3 = new Movie(currentTime, currentTime, "나의 소녀시대", LocalDate.of(2015, 8, 13), director3, MovieGenre.ROMANCE, 134);
             em.persist(movie1);
             em.persist(movie2);
             em.persist(movie3);
@@ -105,6 +113,83 @@ public class JpaMain {
             em.persist(movieActor10);
             em.persist(movieActor11);
             em.persist(movieActor12);
+
+            // 상영관 2개
+            Theater theater1 = new Theater("1상영관", 1);
+            Theater theater2 = new Theater("2상영관", 2);
+            em.persist(theater1);
+            em.persist(theater2);
+
+            // 좌석 - 각 상영관 마다 2행 5열 10개씩
+            for (int i = 1; i < 6; i++) {
+                for (int j = 1; j < 5; j++) {
+                    Seat seat = new Seat(i, j, SeatState.AVAILABLE, theater1);
+                    em.persist(seat);
+                }
+            }
+
+            for (int i = 1; i < 6; i++) {
+                for (int j = 1; j < 6; j++) {
+                    Seat seat = new Seat(i, j, SeatState.AVAILABLE, theater2);
+                    em.persist(seat);
+                }
+            }
+
+            // 상영
+            // 각 상영관은 하나의 영화만 상영한다.
+            // 각 상영관은 하루에 최소 2개 이상의 상영 스케줄을 가진다.
+            Screening screening1 = new Screening(movie1, LocalTime.of(12, 0), theater1);
+            Screening screening2 = new Screening(movie1, LocalTime.of(18, 0), theater1);
+            em.persist(screening1);
+            em.persist(screening2);
+
+            Screening screening3 = new Screening(movie2, LocalTime.of(8, 0), theater2);
+            Screening screening4 = new Screening(movie2, LocalTime.of(20, 0), theater2);
+            em.persist(screening3);
+            em.persist(screening4);
+            
+            // 고객 2명
+            LocalDateTime createdDate = LocalDateTime.now();
+            LocalDate birthDate = LocalDate.of(1999, 1, 1);
+            Address address1 = new Address("city", "street", "zipcode");
+            Client client1 = new Client(createdDate, createdDate, "홍길동", birthDate, address1, 0);
+            em.persist(client1);
+
+            LocalDateTime createdDate1 = LocalDateTime.now();
+            LocalDate birthDate1 = LocalDate.of(1999, 1, 2);
+            Address address2 = new Address("city1", "street1", "zipcode1");
+            Client client2 = new Client(createdDate1, createdDate1, "배트맨", birthDate1, address2, 0);
+            em.persist(client2);
+
+            // 예매
+            // 최초 사용자 2명은 1상영관의 첫 번째 상영을 각각 예매하며 각각 2자리를 지정했다.
+            // 1상영관의 첫 번째 상영의 남은 자리는 6개이며 새롭게 추가한 사용자가 1상영관의 첫 번째 상영을 예매하는 시나리오를 가정
+            /*makeBooking(client1, screening1, theater1);
+            makeBooking(client2, screening1, theater1);*/
+
+
+            tx.commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+            tx.rollback();
+        } finally {
+            em.close();
+        }
+
+        emf.close();
+    }
+
+    // 고객, 상영, 상영관 선택
+    public static void makeBooking(Client client, Screening screening, Theater theater){
+        EntityManager em = emf.createEntityManager();
+
+        EntityTransaction tx = em.getTransaction();
+
+        try {
+            tx.begin();
+            
+            // 현재 남은 좌석 보여주기
+
 
             tx.commit();
         } catch (Exception e) {

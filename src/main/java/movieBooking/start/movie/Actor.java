@@ -6,6 +6,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -30,7 +31,7 @@ public class Actor {
     private String agency;
 
     @OneToMany(mappedBy = "actor")
-    private List<MovieActor> productionCasts;
+    private List<MovieActor> productionCasts = new ArrayList<>();
 
     public Actor(String name, LocalDate birthDate, Double height, String agency) {
         this.name = name;

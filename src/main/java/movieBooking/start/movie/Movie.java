@@ -7,6 +7,8 @@ import movieBooking.start.BaseEntity;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -40,9 +42,10 @@ public class Movie extends BaseEntity {
 
     // 배우
     @OneToMany(mappedBy = "movie")
-    private List<MovieActor> actors;
+    private List<MovieActor> actors = new ArrayList<>();
 
-    public Movie(String title, LocalDate releaseDate, Director director, MovieGenre movieGenre, Integer runningTime) {
+    public Movie(LocalDateTime createdDate, LocalDateTime lastModifiedDate, String title, LocalDate releaseDate, Director director, MovieGenre movieGenre, Integer runningTime) {
+        super(createdDate, lastModifiedDate);
         this.title = title;
         this.releaseDate = releaseDate;
         setDirector(director);
