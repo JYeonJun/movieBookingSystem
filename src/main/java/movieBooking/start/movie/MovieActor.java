@@ -1,6 +1,7 @@
 package movieBooking.start.movie;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import net.bytebuddy.asm.Advice;
 
@@ -9,6 +10,7 @@ import javax.persistence.*;
 @Entity
 @Getter
 @Setter
+@NoArgsConstructor
 public class MovieActor {
 
     @Id
@@ -26,6 +28,12 @@ public class MovieActor {
 
     @Enumerated(EnumType.STRING)
     private MovieActorState movieActorState;
+
+    public MovieActor(Movie movie, Actor actor, MovieActorState movieActorState) {
+        setMovie(movie);
+        setActor(actor);
+        this.movieActorState = movieActorState;
+    }
 
     /* 연관관계 편의 메서드 */
     public void setMovie(Movie movie) {
