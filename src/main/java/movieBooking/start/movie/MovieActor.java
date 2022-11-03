@@ -2,6 +2,7 @@ package movieBooking.start.movie;
 
 import lombok.Getter;
 import lombok.Setter;
+import net.bytebuddy.asm.Advice;
 
 import javax.persistence.*;
 
@@ -25,4 +26,21 @@ public class MovieActor {
 
     @Enumerated(EnumType.STRING)
     private MovieActorState movieActorState;
+
+    /* 연관관계 편의 메서드 */
+    public void setMovie(Movie movie) {
+        if (this.movie != null) {
+            this.movie.getActors().remove(this);
+        }
+        this.movie = movie;
+        movie.getActors().add(this);
+    }
+
+    public void setActor(Actor actor) {
+        if (this.actor != null) {
+            this.actor.getProductionCasts().remove(this);
+        }
+        this.actor = actor;
+        actor.getProductionCasts().remove(this);
+    }
 }
