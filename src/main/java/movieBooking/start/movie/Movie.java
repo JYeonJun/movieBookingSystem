@@ -39,4 +39,13 @@ public class Movie extends BaseEntity {
 
     // 러닝타임 (분)
     private Integer runningTime;
+
+    /* 연관관계 편의 메서드 */
+    public void setDirector(Director director) {
+        if (this.director != null) {
+            this.director.getDirectedProductions().remove(this);
+        }
+        this.director = director;
+        director.getDirectedProductions().add(this);
+    }
 }
