@@ -1,6 +1,7 @@
 package movieBooking.start.movie;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import movieBooking.start.BaseEntity;
 
@@ -11,6 +12,7 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
+@NoArgsConstructor
 public class Movie extends BaseEntity {
 
     @Id
@@ -29,16 +31,24 @@ public class Movie extends BaseEntity {
     @JoinColumn(name = "DIRECTO_ID")
     private Director director;
 
-    // 배우
-    @OneToMany(mappedBy = "movie")
-    private List<MovieActor> actors;
-
     // 장르
     @Enumerated(EnumType.STRING)
     private MovieGenre movieGenre;
 
     // 러닝타임 (분)
     private Integer runningTime;
+
+    // 배우
+    @OneToMany(mappedBy = "movie")
+    private List<MovieActor> actors;
+
+    public Movie(String title, LocalDate releaseDate, Director director, MovieGenre movieGenre, Integer runningTime) {
+        this.title = title;
+        this.releaseDate = releaseDate;
+        setDirector(director);
+        this.movieGenre = movieGenre;
+        this.runningTime = runningTime;
+    }
 
     /* 연관관계 편의 메서드 */
     public void setDirector(Director director) {
