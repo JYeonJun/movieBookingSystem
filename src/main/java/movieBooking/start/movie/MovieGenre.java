@@ -1,5 +1,5 @@
 package movieBooking.start.movie;
 
 public enum MovieGenre {
-    ACTION, COMEDY, SF
+    ACTION, COMEDY, ROMANCE
 }
