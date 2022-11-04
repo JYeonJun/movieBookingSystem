@@ -24,7 +24,7 @@ public class Client extends Person {
     // 마일리지
     private Integer mileage;
 
-    @OneToMany(mappedBy = "client", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "client", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Ticketing> ticketingList = new ArrayList<>();
 
     public Client(LocalDateTime createdDate, LocalDateTime lastModifiedDate, String name, LocalDate birthDate, Address address, Integer mileage) {

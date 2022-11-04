@@ -3,6 +3,7 @@ package movieBooking.start.theater;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import movieBooking.start.ticketing.Ticketing;
 
 import javax.persistence.*;
 
@@ -31,6 +32,10 @@ public class Seat {
     @JoinColumn(name = "THEATER_ID")
     private Theater theater;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "TICKETING_ID")
+    private Ticketing ticketing;
+
     public Seat(Integer lineNumber, Integer columnNumber, SeatState seatState, Theater theater) {
         this.lineNumber = lineNumber;
         this.columnNumber = columnNumber;
@@ -45,6 +50,18 @@ public class Seat {
         }
         this.theater = theater;
         theater.getSeats().add(this);
+    }
+
+    public void setTicketing(Ticketing ticketing) {
+        if (this.ticketing != null) {
+            this.ticketing.getReservationSeats().remove(this);
+        }
+        this.ticketing = ticketing;
+        ticketing.getReservationSeats().add(this);
+    }
+
+    public void setTicketingNull() {
+        this.ticketing = null;
     }
 
     /* 비지니스 로직 */
