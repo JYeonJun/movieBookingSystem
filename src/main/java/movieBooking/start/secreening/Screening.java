@@ -33,7 +33,7 @@ public class Screening {
     // 종료시간 = 시작시간.plusMinutes(movie.getRunningTime())
     private LocalTime endTime;
 
-    // 상영관 이름
+    // 상영관 이름/
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "THEATER_ID")
     private Theater theater;
@@ -43,6 +43,15 @@ public class Screening {
         this.startTime = startTime;
         this.endTime = calEndTime();
         this.theater = theater;
+    }
+
+    @Override
+    public String toString() {
+        return "Screening{" +
+                "movie.title()=" + movie.getTitle() +
+                ", startTime=" + startTime +
+                ", endTime=" + endTime +
+                '}';
     }
 
     /* 로직 */

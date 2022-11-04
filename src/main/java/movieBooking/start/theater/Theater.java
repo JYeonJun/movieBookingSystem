@@ -32,5 +32,14 @@ public class Theater {
         this.name = name;
         this.floor = floor;
     }
+
+    @Override
+    public String toString() {
+        return "Theater{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", floor=" + floor +
+                '}';
+    }
 }
 

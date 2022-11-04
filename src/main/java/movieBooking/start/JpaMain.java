@@ -147,7 +147,7 @@ public class JpaMain {
             Screening screening4 = new Screening(movie2, LocalTime.of(20, 0), theater2);
             em.persist(screening3);
             em.persist(screening4);
-            
+
             // 고객 2명
             LocalDateTime createdDate = LocalDateTime.now();
             LocalDate birthDate = LocalDate.of(1999, 1, 1);
@@ -164,8 +164,8 @@ public class JpaMain {
             // 예매
             // 최초 사용자 2명은 1상영관의 첫 번째 상영을 각각 예매하며 각각 2자리를 지정했다.
             // 1상영관의 첫 번째 상영의 남은 자리는 6개이며 새롭게 추가한 사용자가 1상영관의 첫 번째 상영을 예매하는 시나리오를 가정
-            /*makeBooking(client1, screening1, theater1);
-            makeBooking(client2, screening1, theater1);*/
+            makeBooking(client1, theater1);
+            makeBooking(client2, theater1);
 
 
             tx.commit();
@@ -179,15 +179,25 @@ public class JpaMain {
         emf.close();
     }
 
-    // 고객, 상영, 상영관 선택
-    public static void makeBooking(Client client, Screening screening, Theater theater){
+    // 고객, 상영관 선택
+    public static void makeBooking(Client client, Theater theater){
         EntityManager em = emf.createEntityManager();
 
         EntityTransaction tx = em.getTransaction();
 
         try {
             tx.begin();
-            
+
+            // 상영관으로 상영 보여주기
+            List<Screening> screeningList = em.createQuery("select s from Screening s join s.theater t on t.id = :tid", Screening.class)
+                    .getResultList();
+
+            System.out.println("================================");
+            System.out.println("screeningList.size() = " + screeningList.size());
+            for (Screening screening : screeningList) {
+                System.out.println("screening = " + screening);
+            }
+
             // 현재 남은 좌석 보여주기
 
 
@@ -198,7 +208,5 @@ public class JpaMain {
         } finally {
             em.close();
         }
-
-        emf.close();
     }
 }
