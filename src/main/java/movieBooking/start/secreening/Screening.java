@@ -48,9 +48,10 @@ public class Screening {
     @Override
     public String toString() {
         return "Screening{" +
-                "movie.title()=" + movie.getTitle() +
-                ", startTime=" + startTime +
-                ", endTime=" + endTime +
+                "screening.id() = " + id +
+                ", movie.title() = " + movie.getTitle() +
+                ", startTime = " + startTime +
+                ", endTime = " + endTime +
                 '}';
     }
 

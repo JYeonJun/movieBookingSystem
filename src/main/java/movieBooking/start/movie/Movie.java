@@ -30,7 +30,7 @@ public class Movie extends BaseEntity {
 
     // 감독
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "DIRECTO_ID")
+    @JoinColumn(name = "DIRECTOR_ID")
     private Director director;
 
     // 장르

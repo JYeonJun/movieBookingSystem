@@ -21,6 +21,8 @@ public class Ticketing {
     @JoinColumn(name = "SCREENING_ID")
     private Screening screening;
 
+    @OneToMany(mappedBy = "ticketing")
+
     // 한 예매에는 여러 개의 좌석을 선택할 수 있다.
 
     // 예매는 취소가 가능하다.

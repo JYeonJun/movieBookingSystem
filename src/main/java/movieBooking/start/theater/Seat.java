@@ -46,4 +46,9 @@ public class Seat {
         this.theater = theater;
         theater.getSeats().add(this);
     }
+
+    /* 비지니스 로직 */
+    public void changeSeatState(SeatState seatState) {
+        this.seatState = seatState;
+    }
 }

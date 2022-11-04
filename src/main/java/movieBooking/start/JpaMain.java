@@ -17,6 +17,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Scanner;
 
 public class JpaMain {
 
@@ -80,7 +81,7 @@ public class JpaMain {
 
             // 영화 3건 (그 시절 우리가 좋아했던 소녀, 너의 췌장을 먹고 싶어, 나의 소녀시대)
             LocalDateTime currentTime = LocalDateTime.now();
-            Movie movie1 = new Movie(currentTime, currentTime,"그 시절 우리가 좋아했떤 소녀", LocalDate.of(2012, 8, 22), director1, MovieGenre.ROMANCE, 107);
+            Movie movie1 = new Movie(currentTime, currentTime,"그 시절 우리가 좋아했던 소녀", LocalDate.of(2012, 8, 22), director1, MovieGenre.ROMANCE, 107);
             Movie movie2 = new Movie(currentTime, currentTime, "너의 췌장을 먹고 싶어", LocalDate.of(2017, 10, 25), director2, MovieGenre.ROMANCE, 115);
             Movie movie3 = new Movie(currentTime, currentTime, "나의 소녀시대", LocalDate.of(2015, 8, 13), director3, MovieGenre.ROMANCE, 134);
             em.persist(movie1);
@@ -121,14 +122,14 @@ public class JpaMain {
             em.persist(theater2);
 
             // 좌석 - 각 상영관 마다 2행 5열 10개씩
-            for (int i = 1; i < 6; i++) {
-                for (int j = 1; j < 5; j++) {
+            for (int i = 1; i < 3; i++) {
+                for (int j = 1; j < 6; j++) {
                     Seat seat = new Seat(i, j, SeatState.AVAILABLE, theater1);
                     em.persist(seat);
                 }
             }
 
-            for (int i = 1; i < 6; i++) {
+            for (int i = 1; i < 3; i++) {
                 for (int j = 1; j < 6; j++) {
                     Seat seat = new Seat(i, j, SeatState.AVAILABLE, theater2);
                     em.persist(seat);
@@ -164,8 +165,8 @@ public class JpaMain {
             // 예매
             // 최초 사용자 2명은 1상영관의 첫 번째 상영을 각각 예매하며 각각 2자리를 지정했다.
             // 1상영관의 첫 번째 상영의 남은 자리는 6개이며 새롭게 추가한 사용자가 1상영관의 첫 번째 상영을 예매하는 시나리오를 가정
-            makeBooking(client1, theater1);
-            makeBooking(client2, theater1);
+//            makeBooking(em, client1, theater1);
+
 
 
             tx.commit();
@@ -179,34 +180,80 @@ public class JpaMain {
         emf.close();
     }
 
+    static void movieReservation(Long userPK, long ScreenPK, List<String> seats) {
+
+    }
+
     // 고객, 상영관 선택
-    public static void makeBooking(Client client, Theater theater){
-        EntityManager em = emf.createEntityManager();
+    /*static void makeBooking(EntityManager em, Client client, Theater theater){
 
-        EntityTransaction tx = em.getTransaction();
+        Scanner scanner = new Scanner(System.in);
 
-        try {
-            tx.begin();
+        // 상영관으로 상영 보여주기
+        showScreening(em, theater);
+        System.out.print("\n원하는 상영의 id를 입력하시오: ");
+        int screeningSelection = scanner.nextInt();
 
-            // 상영관으로 상영 보여주기
-            List<Screening> screeningList = em.createQuery("select s from Screening s join s.theater t on t.id = :tid", Screening.class)
-                    .getResultList();
+        Screening findScreening = em.find(Screening.class, (long) screeningSelection);
+        Long theaterId = findScreening.getTheater().getId();
 
-            System.out.println("================================");
-            System.out.println("screeningList.size() = " + screeningList.size());
-            for (Screening screening : screeningList) {
-                System.out.println("screening = " + screening);
+        // 현재 남은 좌석 보여주기
+        showSeats(em, theaterId, findScreening.getTheater().getName());
+        System.out.println("원하는 좌석을 입력하세요. (입력 종료: 0, 0)");
+        while (true) {
+            System.out.print("행: ");
+            int lineNum = scanner.nextInt();
+
+            System.out.print("열: ");
+            int columnNum = scanner.nextInt();
+
+            if(lineNum == 0 || columnNum == 0)
+                break;
+
+            // 좌석 상태 변경
+            Seat findSeat = em.createQuery("select s from Seat s join s.theater t on t.id = :tid where s.lineNumber = :lineNum and s.columnNumber = :columnNum", Seat.class)
+                    .setParameter("tid", theaterId)
+                    .setParameter("lineNum", lineNum)
+                    .setParameter("columnNum", columnNum)
+                    .getSingleResult();
+
+            findSeat.changeSeatState(SeatState.UNAVAILABLE);
+
+            // 예약 생성
+        }
+    }*/
+
+    static void showScreening(EntityManager em, Theater theater) {
+        List<Screening> screeningList = em.createQuery("select s from Screening s join s.theater t on t.id = :tid order by s.startTime", Screening.class)
+                .setParameter("tid", theater.getId()).getResultList();
+
+        System.out.println("========== " + theater.getName() + " 상영 목록 ==========");
+        for (Screening screening : screeningList) {
+            System.out.println(screening);
+        }
+    }
+
+    static void showSeats(EntityManager em, Long theaterId, String theaterName) {
+        Theater findTheater = em.createQuery("select t from Theater t join fetch t.seats where t.id = :tid", Theater.class)
+                .setParameter("tid", theaterId).getSingleResult();
+
+        List<Seat> seats = findTheater.getSeats();
+
+        System.out.println("\n========== " + theaterName + " 좌석 목록 ==========");
+        for (Seat seat : seats) {
+            if(seat.getLineNumber() == 1 && seat.getColumnNumber() == 1){
+                System.out.print("1행: ");
             }
 
-            // 현재 남은 좌석 보여주기
+            if(seat.getLineNumber() == 2 && seat.getColumnNumber() == 1){
+                System.out.println();
+                System.out.print("2행: ");
+            }
 
-
-            tx.commit();
-        } catch (Exception e) {
-            e.printStackTrace();
-            tx.rollback();
-        } finally {
-            em.close();
+            if(seat.getSeatState() == SeatState.AVAILABLE)
+                System.out.print("O");
+            else System.out.print("X");
         }
+        System.out.println();
     }
 }
